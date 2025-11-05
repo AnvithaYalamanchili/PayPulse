@@ -4,7 +4,6 @@ from passlib.hash import argon2
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    # Hash password using Argon2
     hashed_password = argon2.hash(user.password)
 
     db_user = models.User(

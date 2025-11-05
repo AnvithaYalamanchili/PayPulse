@@ -26,7 +26,7 @@ class Plan(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     price = Column(Float)
-    features = Column(String)  # comma-separated features
+    features = Column(String)  
     quota_limit = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)
     subscriptions = relationship("Subscription", back_populates="plan")
@@ -60,8 +60,8 @@ class Payment(Base):
     subscription_id = Column(Integer, ForeignKey("subscriptions.id"))
     amount = Column(Float)
     currency = Column(String)
-    status = Column(String)  # e.g., success, failed, pending
-    payment_gateway_id = Column(String)  # Stripe/PayPal ID
+    status = Column(String)  
+    payment_gateway_id = Column(String)  
     created_at = Column(DateTime, default=datetime.utcnow)
     user = relationship("User")
     subscription = relationship("Subscription")
@@ -70,8 +70,8 @@ class Notification(Base):
     __tablename__ = "notifications"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    type = Column(String)       # e.g., "email", "SMS"
-    message = Column(String)    # content of the notification
-    status = Column(String)     # e.g., "sent", "failed", "pending"
+    type = Column(String)      
+    message = Column(String)    
+    status = Column(String)     
     created_at = Column(DateTime, default=datetime.utcnow)
     user = relationship("User")
