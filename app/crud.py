@@ -36,3 +36,41 @@ def authenticate_user(db:Session,email:str,password:str):
     if not argon2.verify(password,user.password_hash):
         return None
     return user
+
+
+def create_plan(db:Session,plan:schemas.PlanCreate):
+    db_plan=models.Plan(
+        name=plan.name,
+        price=plan.price,
+        features=plan.features,
+        quota_limit=plan.quota_limit
+    )
+    db.add(db_plan)
+    db.commit()
+    db.refresh(db_plan)
+    return db_plan
+
+def get_plans(db:Session):
+    return db.query(models.Plan).all()
+
+def get_plan_by_id(db:Session,plan_id:int):
+    return db.query(models.Plan).filter(models.Plan.id==plan_id).first()
+
+def update_plan(db:Session,plan_id:int,plan_update:schemas.PlanUpdate):
+    db_plan=get_plan_by_id(db,plan_id)
+    if not db_plan:
+        return None
+    update_data=plan_update.dict(exclude_unset=True)
+    if not update_data:
+        return None
+    db.query(models.Plan).filter(models.Plan.id==plan_id).update(update_data)
+    db.commit()
+    return db.query(models.Plan).filter(models.Plan.id == plan_id).first()
+
+def delete_plan(db: Session, plan_id: int):
+    db_plan = get_plan_by_id(db, plan_id)
+    if not db_plan:
+        return None
+    db.delete(db_plan)
+    db.commit()
+    return db_plan

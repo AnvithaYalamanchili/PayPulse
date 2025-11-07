@@ -18,3 +18,26 @@ class UserResponse(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class PlanBase(BaseModel):
+    name:str
+    price:float
+    features:str
+    quota_limit:int
+
+class PlanCreate(PlanBase):
+    pass
+
+class PlanUpdate(BaseModel):
+    name:Optional[str]=None
+    price:Optional[float]=None
+    features:Optional[str]=None
+    quota_limit:Optional[int]=None
+
+class PlanOut(PlanBase):
+    id:int
+    created_at:datetime
+
+    class Config:
+        orm_mode = True
