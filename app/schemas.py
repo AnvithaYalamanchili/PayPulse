@@ -41,3 +41,18 @@ class PlanOut(PlanBase):
 
     class Config:
         orm_mode = True
+
+class SubscriptionCreate(BaseModel):
+    plan_id:int
+
+class SubscriptionOut(BaseModel):
+    id:int
+    user_id:int
+    plan_id:int
+    start_date:datetime
+    end_date:datetime
+    status:str
+    payment_id:Optional[str]
+
+    class Config:
+        orm_mode:True

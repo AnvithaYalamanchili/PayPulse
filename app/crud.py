@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from . import models,schemas
 from .models import RoleEnum
 from passlib.hash import argon2
-from fastapi import HTTPException as HTTP
+from fastapi import HTTPException
+from datetime import datetime,timedelta
 
 
 def create_user(db: Session, user: schemas.UserCreate):
@@ -74,3 +75,27 @@ def delete_plan(db: Session, plan_id: int):
     db.delete(db_plan)
     db.commit()
     return db_plan
+
+def create_subscription(db:Session,user_id:int,plan_id:int):
+    active_subs=db.query(models.Subscription).filter(models.Subscription.user_id==user_id,models.Subscription.status=="active").first()
+    if active_subs:
+        active_subs.status="inactive"
+        db.add(active_subs)
+    
+    if active_subs and active_subs.plan_id==plan_id:
+        raise HTTPException(status_code=403,detail="User already subscribed to this plan")
+    
+    db_sub=models.Subscription(
+        user_id=user_id,
+        plan_id=plan_id,
+        start_date=datetime.utcnow(),
+        end_date=datetime.utcnow()+timedelta(days=30),
+        status="active"
+        )
+    db.add(db_sub)
+    db.commit()
+    db.refresh(db_sub)
+    return db_sub
+
+def get_user_subscriptions(db:Session,user_id:int):
+    return db.query(models.Subscription).filter(models.Subscription.user_id==user_id).all()
